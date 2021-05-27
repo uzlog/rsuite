@@ -95,7 +95,10 @@ module.exports = config => {
     webpackMiddleware: {
       noInfo: true
     },
-    browsers: [process.env.BROWSER ?? 'Chrome'],
+    browsers: [process.env.BROWSER || 'Chrome'],
+    browserstack: {
+      project: 'rsuite'
+    },
     customLaunchers: {
       bs_win_ie11: {
         base: 'BrowserStack',
