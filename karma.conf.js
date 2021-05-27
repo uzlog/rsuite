@@ -102,6 +102,7 @@ module.exports = config => {
     browsers: ['bs_mac_chrome', 'bs_mac_firefox', 'bs_mac_safari', 'bs_win_edge', 'bs_win_ie11'],
     customLaunchers: {
       bs_win_ie11: {
+        base: 'BrowserStack',
         os: 'Windows',
         os_version: '10',
         browserName: 'IE',
@@ -110,6 +111,7 @@ module.exports = config => {
       },
 
       bs_win_edge: {
+        base: 'BrowserStack',
         os: 'Windows',
         os_version: '10',
         browserName: 'Edge',
@@ -118,18 +120,21 @@ module.exports = config => {
       },
 
       bs_mac_chrome: {
+        base: 'BrowserStack',
         os: 'OS X',
         os_version: 'Big Sur',
         browserName: 'Chrome',
         browser_version: 'latest'
       },
       bs_mac_firefox: {
+        base: 'BrowserStack',
         os: 'OS X',
         os_version: 'Big Sur',
         browserName: 'Firefox',
         browser_version: 'latest'
       },
       bs_mac_safari: {
+        base: 'BrowserStack',
         os: 'OS X',
         os_version: 'Big Sur',
         browserName: 'Safari',

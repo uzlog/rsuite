@@ -22,10 +22,6 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        browser: [ChromeCi, Firefox, Safari]
-
     steps:
       - uses: actions/checkout@v2
 
@@ -50,4 +46,3 @@ jobs:
         run: xvfb-run --auto-servernum npm test
         env:
           CI: true
-          BROWSER: ${{ matrix.browser }}
