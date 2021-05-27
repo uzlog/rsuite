@@ -82,10 +82,6 @@ module.exports = config => {
     /** How long will Karma wait for a message from a browser before disconnecting from it (in ms). */
     browserNoActivityTimeout: 210000,
     basePath: '',
-    browserStack: {
-      username: process.env.BS_USERNAME,
-      accessKey: process.env.BS_ACCESS_KEY
-    },
     files: [testFile],
     frameworks: ['mocha', 'sinon-chai'],
     colors: true,
