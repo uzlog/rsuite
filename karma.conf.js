@@ -95,7 +95,7 @@ module.exports = config => {
     webpackMiddleware: {
       noInfo: true
     },
-    browsers: ['bs_mac_chrome', 'bs_mac_firefox', 'bs_mac_safari', 'bs_win_edge', 'bs_win_ie11'],
+    browsers: [process.env.BROWSER ?? 'Chrome'],
     customLaunchers: {
       bs_win_ie11: {
         base: 'BrowserStack',
