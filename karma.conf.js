@@ -101,7 +101,7 @@ module.exports = config => {
         base: 'BrowserStack',
         os: 'Windows',
         os_version: '10',
-        browserName: 'IE',
+        browser: 'IE',
         browser_version: '11.0',
         resolution: '1366x768'
       },
@@ -110,7 +110,7 @@ module.exports = config => {
         base: 'BrowserStack',
         os: 'Windows',
         os_version: '10',
-        browserName: 'Edge',
+        browser: 'Edge',
         browser_version: 'latest',
         resolution: '1366x768'
       },
@@ -119,21 +119,21 @@ module.exports = config => {
         base: 'BrowserStack',
         os: 'OS X',
         os_version: 'Big Sur',
-        browserName: 'Chrome',
+        browser: 'Chrome',
         browser_version: 'latest'
       },
       bs_mac_firefox: {
         base: 'BrowserStack',
         os: 'OS X',
         os_version: 'Big Sur',
-        browserName: 'Firefox',
+        browser: 'Firefox',
         browser_version: 'latest'
       },
       bs_mac_safari: {
         base: 'BrowserStack',
         os: 'OS X',
         os_version: 'Big Sur',
-        browserName: 'Safari',
+        browser: 'Safari',
         browser_version: '14.0'
       }
     },
