@@ -9,6 +9,7 @@ on:
       - master
       - next
       - v4
+      - 'ci/**'
   pull_request:
     branches:
       - master
@@ -23,7 +24,7 @@ jobs:
 
     strategy:
       matrix:
-        browser: [ChromeCi, Firefox]
+        browser: [ChromeCi, Firefox, Safari]
 
     steps:
       - uses: actions/checkout@v2

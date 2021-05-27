@@ -82,10 +82,14 @@ module.exports = config => {
     /** How long will Karma wait for a message from a browser before disconnecting from it (in ms). */
     browserNoActivityTimeout: 210000,
     basePath: '',
+    browserStack: {
+      username: process.env.BS_USERNAME,
+      accessKey: process.env.BS_ACCESS_KEY
+    },
     files: [testFile],
     frameworks: ['mocha', 'sinon-chai'],
     colors: true,
-    reporters: ['mocha', 'coverage'],
+    reporters: ['mocha', 'coverage', 'BrowserStack'],
     logLevel: config.LOG_INFO,
     preprocessors: {
       'test/*.js': ['webpack'],
@@ -95,17 +99,41 @@ module.exports = config => {
     webpackMiddleware: {
       noInfo: true
     },
-    browsers: env.BROWSER ? env.BROWSER.split(',') : ['Chrome'],
+    browsers: ['bs_mac_chrome', 'bs_mac_firefox', 'bs_mac_safari', 'bs_win_edge', 'bs_win_ie11'],
     customLaunchers: {
-      ChromeCi: {
-        base: 'Chrome',
-        flags: ['--no-sandbox']
+      bs_win_ie11: {
+        os: 'Windows',
+        os_version: '10',
+        browserName: 'IE',
+        browser_version: '11.0',
+        resolution: '1366x768'
       },
-      FirefoxAutoAllowGUM: {
-        base: 'Firefox',
-        prefs: {
-          'media.navigator.permission.disabled': true
-        }
+
+      bs_win_edge: {
+        os: 'Windows',
+        os_version: '10',
+        browserName: 'Edge',
+        browser_version: 'latest',
+        resolution: '1366x768'
+      },
+
+      bs_mac_chrome: {
+        os: 'OS X',
+        os_version: 'Big Sur',
+        browserName: 'Chrome',
+        browser_version: 'latest'
+      },
+      bs_mac_firefox: {
+        os: 'OS X',
+        os_version: 'Big Sur',
+        browserName: 'Firefox',
+        browser_version: 'latest'
+      },
+      bs_mac_safari: {
+        os: 'OS X',
+        os_version: 'Big Sur',
+        browserName: 'Safari',
+        browser_version: '14.0'
       }
     },
     coverageReporter: {
