@@ -22,6 +22,8 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    continue-on-error: true
+
     strategy:
       matrix:
         browser: ['bs_mac_chrome', 'bs_mac_firefox', 'bs_mac_safari', 'bs_win_edge', 'bs_win_ie11']
