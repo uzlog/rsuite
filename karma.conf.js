@@ -70,17 +70,6 @@ module.exports = config => {
   }
 
   config.set({
-    /** Timeout for capturing a browser (in ms). */
-    captureTimeout: 210000,
-
-    /** maximum number of tries a browser will attempt in the case of a disconnection (in ms) */
-    browserDisconnectTolerance: 3,
-
-    /** How long does Karma wait for a browser to reconnect (in ms). */
-    browserDisconnectTimeout: 210000,
-
-    /** How long will Karma wait for a message from a browser before disconnecting from it (in ms). */
-    browserNoActivityTimeout: 210000,
     basePath: '',
     files: [testFile],
     frameworks: ['mocha', 'sinon-chai'],
@@ -95,10 +84,9 @@ module.exports = config => {
     webpackMiddleware: {
       noInfo: true
     },
-    browsers: ['bs_win_ie11', 'bs_win_edge', 'bs_mac_chrome', 'bs_mac_firefox', 'bs_mac_safari'],
     browserStack: {
-      localIdentifier: process.env.BROWSERSTACK_LOCAL_IDENTIFIER,
-      project: 'rsuite'
+      project: process.env.BROWSERSTACK_PROJECT_NAME,
+      build: process.env.BROWSERSTACK_BUILD_NAME
     },
     customLaunchers: {
       bs_win_ie11: {
@@ -141,6 +129,13 @@ module.exports = config => {
         browser_version: '14.0'
       }
     },
+    browsers: [process.env.KARMA_BROWSER || 'Chrome'],
+    // @see https://github.com/browserstack/karma-browserstack-example/blob/master/karma.conf.js
+    captureTimeout: 3e5,
+    browserDisconnectTolerance: 0,
+    browserDisconnectTimeout: 3e5,
+    browserSocketTimeout: 1.2e5,
+    browserNoActivityTimeout: 3e5,
     coverageReporter: {
       dir: 'coverage',
       reporters: [
