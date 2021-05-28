@@ -96,7 +96,8 @@ module.exports = config => {
       noInfo: true
     },
     browsers: ['bs_win_ie11', 'bs_win_edge', 'bs_mac_chrome', 'bs_mac_firefox', 'bs_mac_safari'],
-    browserstack: {
+    browserStack: {
+      localIdentifier: process.env.BROWSERSTACK_LOCAL_IDENTIFIER,
       project: 'rsuite'
     },
     customLaunchers: {

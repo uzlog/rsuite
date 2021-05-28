@@ -23,6 +23,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: 'BrowserStack Env Setup'  # Invokes the setup-env action
+        uses: browserstack/github-actions/setup-env@master
+        with:
+          username: ${{ secrets.BS_USERNAME }}
+          access-key: ${{ secrets.BS_ACCESS_KEY }}
+
+      - name: 'BrowserStack Local Tunnel Setup'  # Invokes the setup-local action
+        uses: browserstack/github-actions/setup-local@master
+        with:
+          local-testing: start
+          local-identifier: random
+          
       - uses: actions/checkout@v2
 
       - name: Setup kernel, increase watchers
@@ -46,5 +58,7 @@ jobs:
         run: xvfb-run --auto-servernum npm test
         env:
           CI: true
-          BROWSERSTACK_USERNAME: ${{ secrets.BS_USERNAME }}
-          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BS_ACCESS_KEY }}
+      - name: 'BrowserStackLocal Stop'  # Terminating the BrowserStackLocal tunnel connection
+        uses: browserstack/github-actions/setup-local@master
+        with:
+          local-testing: stop
