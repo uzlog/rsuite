@@ -86,7 +86,9 @@ module.exports = config => {
     },
     browserStack: {
       project: process.env.BROWSERSTACK_PROJECT_NAME,
-      build: process.env.BROWSERSTACK_BUILD_NAME
+      build: process.env.BROWSERSTACK_BUILD_NAME,
+      retryLimit: 0, // don't reconnect if disconnected
+      timeout: 600 // 10min
     },
     customLaunchers: {
       bs_win_ie11: {
