@@ -55,7 +55,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Run headless tests
-        run: xvfb-run --auto-servernum npm test
+        run: npm test
         env:
           CI: true
           KARMA_BROWSER: ${{ matrix.browser }}
