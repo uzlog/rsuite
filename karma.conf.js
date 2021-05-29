@@ -8,6 +8,7 @@
 
 const path = require('path');
 const webpack = require('webpack');
+const package = require('./package.json');
 
 const webpackConfig = {
   output: {
@@ -85,9 +86,11 @@ module.exports = config => {
       noInfo: true
     },
     browserStack: {
-      project: process.env.BROWSERSTACK_PROJECT_NAME,
+      project: process.env.BROWSERSTACK_PROJECT_NAME || package.name,
       build: process.env.BROWSERSTACK_BUILD_NAME,
-      retryLimit: 0, // don't reconnect if disconnected
+      // use '0' instead of 0 because 0 doesn't work
+      // @see https://github.com/karma-runner/karma-browserstack-launcher/issues/179
+      retryLimit: '0',
       timeout: 600 // 10min
     },
     customLaunchers: {
@@ -131,7 +134,7 @@ module.exports = config => {
         browser_version: '14.0'
       }
     },
-    browsers: [process.env.KARMA_BROWSER || 'Chrome'],
+    browsers: [process.env.KARMA_BROWSER || 'bs_mac_safari'],
     // @see https://github.com/browserstack/karma-browserstack-example/blob/master/karma.conf.js
     captureTimeout: 3e5,
     browserDisconnectTolerance: 0,
