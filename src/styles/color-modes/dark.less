@@ -28,6 +28,7 @@
   --rs-bg-backdrop: fade(@B900, 80%);
   --rs-state-hover-bg: @B600;
   --rs-state-focus-shadow: 0 0 0 3px fade(@H500, 25%);
+  --rs-state-focus-outline: 3px solid fade(@H500, 25%);
   --rs-shadow-overlay: 0 4px 4px rgba(0, 0, 0, 0.12), 0 0 10px rgba(0, 0, 0, 0.06);
 
   // Button
@@ -117,6 +118,10 @@
   --rs-dropdown-header-text: @B500;
   --rs-dropdown-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.2), 0 4px 4px 3px rgba(0, 0, 0, 0.24);
 
+  // ARIA menu
+  --rs-menuitem-active-bg: @B600;
+  --rs-menuitem-active-text: currentColor;
+
   // Steps
   --rs-steps-border: @B200;
   --rs-steps-state-finish: @H500;
@@ -131,7 +136,7 @@
   // Navs
   --rs-navs-text: @B200;
   --rs-navs-text-hover: @B100;
-  --rs-navs-bg-hover: @B700;
+  --rs-navs-bg-hover: @B400;
   --rs-navs-text-active: @B000;
   --rs-navs-bg-active: @B400;
   --rs-navs-tab-border: @B600;
@@ -161,6 +166,7 @@
 
   // ARIA Listboxes
   --rs-listbox-option-hover-bg: @B600;
+  --rs-listbox-option-hover-text: currentColor;
   --rs-listbox-option-selected-text: @H500;
   --rs-listbox-option-selected-bg: fade(@H900, 20%);
   --rs-listbox-option-disabled-text: @B500;

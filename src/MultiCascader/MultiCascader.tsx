@@ -15,7 +15,8 @@ import {
   mergeRefs,
   getSafeRegExpString,
   useClassNames,
-  useCustom
+  useCustom,
+  useUpdateEffect
 } from '../utils';
 
 import {
@@ -181,7 +182,13 @@ const MultiCascader: PickerComponent<MultiCascaderProps> = React.forwardRef(
     );
 
     // The columns displayed in the cascading panel.
-    const { columnData, setColumnData, addColumn } = useColumnData(flattenData);
+    const { columnData, setColumnData, addColumn, enforceUpdateColumnData } = useColumnData(
+      flattenData
+    );
+
+    useUpdateEffect(() => {
+      enforceUpdateColumnData(data);
+    }, [data]);
 
     // The path after cascading data selection.
     const [selectedPaths, setSelectedPaths] = useState<ItemDataType[]>();
@@ -189,6 +196,7 @@ const MultiCascader: PickerComponent<MultiCascaderProps> = React.forwardRef(
     const triggerRef = useRef<OverlayTriggerInstance>();
     const overlayRef = useRef<HTMLDivElement>();
     const targetRef = useRef<HTMLDivElement>();
+    const searchInputRef = useRef<HTMLInputElement>();
 
     usePublicMethods(ref, { triggerRef, overlayRef, targetRef });
 
@@ -242,19 +250,12 @@ const MultiCascader: PickerComponent<MultiCascaderProps> = React.forwardRef(
     }, [onClose]);
 
     const handleSelect = useCallback(
-      (
-        node: ItemDataType,
-        cascadeData: ItemDataType[][],
-        cascadePaths: ItemDataType[],
-        event: React.SyntheticEvent
-      ) => {
-        setColumnData(cascadeData);
+      (node: ItemDataType, cascadePaths: ItemDataType[], event: React.SyntheticEvent) => {
         setSelectedPaths(cascadePaths);
-        // setSelectNode(node);
         onSelect?.(node, cascadePaths, event);
 
         // Lazy load node's children
-        if (typeof getChildren === 'function' && node.children?.length === 0) {
+        if (typeof getChildren === 'function' && node[childrenKey]?.length === 0) {
           node.loading = true;
 
           const children = getChildren(node);
@@ -271,11 +272,13 @@ const MultiCascader: PickerComponent<MultiCascaderProps> = React.forwardRef(
             addFlattenData(children, node);
             addColumn(children, cascadePaths.length);
           }
+        } else if (node[childrenKey]?.length) {
+          addColumn(node[childrenKey], cascadePaths.length);
         }
 
         triggerRef.current?.updatePosition?.();
       },
-      [setColumnData, onSelect, getChildren, childrenKey, addColumn, addFlattenData]
+      [onSelect, getChildren, childrenKey, addColumn, addFlattenData]
     );
 
     const handleCheck = useCallback(
@@ -334,6 +337,7 @@ const MultiCascader: PickerComponent<MultiCascaderProps> = React.forwardRef(
       triggerRef,
       targetRef,
       overlayRef,
+      searchInputRef,
       active,
       onExit: handleClean,
       onMenuKeyDown: onFocusItem,
@@ -480,6 +484,7 @@ const MultiCascader: PickerComponent<MultiCascaderProps> = React.forwardRef(
               placeholder={locale?.searchPlaceholder}
               onChange={handleSearch}
               value={searchKeyword}
+              inputRef={searchInputRef}
             />
           )}
 
@@ -500,7 +505,6 @@ const MultiCascader: PickerComponent<MultiCascaderProps> = React.forwardRef(
               cascadeData={columnData}
               cascadePaths={selectedPaths}
               value={value}
-              loadingText={locale?.loading}
               onSelect={handleSelect}
               onCheck={handleCheck}
               renderMenu={renderMenu}

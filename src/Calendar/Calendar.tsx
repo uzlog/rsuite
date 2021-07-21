@@ -83,16 +83,13 @@ export interface CalendarProps
   onSelect?: (date: Date, event: React.MouseEvent<HTMLDivElement>) => void;
 
   /** Date displayed on the current page */
-  pageDate: Date;
+  calendarDate: Date;
 
   /** Custom rendering cell*/
   renderCell?: (date: Date) => React.ReactNode;
 
   /** Whether to show week numbers */
   showWeekNumbers?: boolean;
-
-  /** IANA time zone */
-  timeZone?: string;
 
   inline?: boolean;
 }
@@ -128,13 +125,12 @@ const Calendar: RsRefForwardingComponent<'div', CalendarProps> = React.forwardRe
       onToggleMeridian,
       onToggleMonthDropdown,
       onToggleTimeDropdown,
-      pageDate,
+      calendarDate,
       renderCell,
       renderTitle,
       renderToolbar,
       showMeridian,
       showWeekNumbers,
-      timeZone,
       inline,
       ...rest
     } = props;
@@ -142,12 +138,12 @@ const Calendar: RsRefForwardingComponent<'div', CalendarProps> = React.forwardRe
     const isDisabledDate = (date: Date) => disabledDate?.(date);
     const isTimeDisabled = (date: Date) => DateUtils.disabledTime(props, date);
     const handleMoveForward = useCallback(() => {
-      onMoveForward?.(DateUtils.addMonths(pageDate, 1));
-    }, [onMoveForward, pageDate]);
+      onMoveForward?.(DateUtils.addMonths(calendarDate, 1));
+    }, [onMoveForward, calendarDate]);
 
     const handleMoveBackward = useCallback(() => {
-      onMoveBackward?.(DateUtils.addMonths(pageDate, -1));
-    }, [onMoveBackward, pageDate]);
+      onMoveBackward?.(DateUtils.addMonths(calendarDate, -1));
+    }, [onMoveBackward, calendarDate]);
 
     const showDate = DateUtils.shouldDate(format);
     const showTime = DateUtils.shouldTime(format);
@@ -171,12 +167,13 @@ const Calendar: RsRefForwardingComponent<'div', CalendarProps> = React.forwardRe
       className,
       withClassPrefix({
         'show-time-dropdown': dropTime,
-        'show-month-dropdown': dropMonth
+        'show-month-dropdown': dropMonth,
+        'show-week-numbers': showWeekNumbers
       })
     );
     const timeDropdownProps = pick(rest, DateUtils.calendarOnlyProps);
     const contextValue = {
-      date: pageDate,
+      date: calendarDate,
       dateRange,
       disabledDate: isDisabledDate,
       format,
@@ -190,7 +187,6 @@ const Calendar: RsRefForwardingComponent<'div', CalendarProps> = React.forwardRe
       onSelect,
       renderCell,
       showWeekNumbers,
-      timeZone,
       inline
     };
     return (
@@ -260,13 +256,12 @@ Calendar.propTypes = {
   onToggleMeridian: PropTypes.func,
   onToggleMonthDropdown: PropTypes.func,
   onToggleTimeDropdown: PropTypes.func,
-  pageDate: PropTypes.instanceOf(Date),
+  calendarDate: PropTypes.instanceOf(Date),
   renderCell: PropTypes.func,
   renderTitle: PropTypes.func,
   renderToolbar: PropTypes.func,
   showMeridian: PropTypes.bool,
-  showWeekNumbers: PropTypes.bool,
-  timeZone: PropTypes.string
+  showWeekNumbers: PropTypes.bool
 };
 
 export default Calendar;

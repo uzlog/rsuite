@@ -1,4 +1,5 @@
 @import '../../styles/common';
+@import '../../styles/mixins/menu';
 @import 'mixin';
 
 //
@@ -25,15 +26,6 @@
     > .rs-dropdown-toggle-caret {
       margin-left: 4px;
     }
-  }
-
-  & &-menu {
-    position: absolute;
-    // dropdown-menu zindex value is greater than dropdown-toggle
-    z-index: @zindex-dropdown + 1;
-    display: none; // none by default, but block on "open" of the menu
-    float: left;
-    box-shadow: var(--rs-dropdown-shadow);
   }
 
   &-disabled &-toggle.rs-btn {
@@ -79,10 +71,6 @@
       display: none !important;
     }
   }
-
-  .rs-popover-content &-item-submenu:not(&-item-open) > &-menu {
-    display: none;
-  }
 }
 
 .rs-dropdown-toggle {
@@ -95,7 +83,7 @@
   }
 }
 
-.rs-dropdown-no-caret .rs-dropdown-toggle {
+.rs-dropdown-toggle.rs-dropdown-no-caret {
   padding-right: @padding-x;
 }
 
@@ -108,6 +96,23 @@
   background-color: var(--rs-bg-overlay);
   border-radius: @border-radius;
   padding: @border-radius 0;
+  outline: 0;
+
+  &:focus-visible {
+    .focus-ring();
+  }
+
+  .rs-dropdown & {
+    position: absolute;
+    // dropdown-menu zindex value is greater than dropdown-toggle
+    z-index: @zindex-dropdown + 1;
+    float: left;
+    box-shadow: var(--rs-dropdown-shadow);
+  }
+
+  &[hidden] {
+    display: none;
+  }
 }
 
 // Links within the dropdown menu
@@ -120,7 +125,6 @@
   color: var(--rs-text-primary);
   white-space: nowrap; // prevent links from randomly breaking onto new lines
   cursor: pointer; //fixed link has not [href] style
-  transition: color 0.3s linear, background-color 0.3s linear;
   .reset-link-text-decoration(none);
 
   > .rs-icon {
@@ -129,11 +133,25 @@
     margin-right: 6px;
   }
 
+  &&-active {
+    outline: 0;
+    font-weight: bold;
+
+    &,
+    &:hover,
+    &:focus {
+      color: var(--rs-dropdown-item-text-active);
+      background-color: var(--rs-dropdown-item-bg-active);
+    }
+  }
+
   // Hover/Focus state
-  &:hover,
+  &:focus-visible,
+  &&-focus {
+    .menuitem-active();
+  }
   &:focus {
-    color: inherit;
-    background-color: var(--rs-dropdown-item-bg-hover);
+    outline: 0;
   }
 
   // Disabled state
@@ -162,15 +180,18 @@
 .rs-dropdown-item-submenu {
   position: relative;
 
+  &:hover > .rs-dropdown-item-toggle {
+    .menuitem-active();
+  }
+
   &.rs-dropdown-item {
     position: relative;
 
-    > .rs-dropdown-menu-toggle {
-      display: inline-block;
-
+    > .rs-dropdown-item-toggle {
       .rs-dropdown-menu-toggle-icon {
         position: absolute;
         top: 11px;
+        margin: 0;
       }
     }
 
@@ -181,35 +202,38 @@
   }
 
   // Set submenu icon
-  &.rs-dropdown-menu-pull-right {
-    &.rs-dropdown-item {
+  .rs-dropdown-item& {
+    padding: 0;
+
+    .rs-dropdown-item-toggle {
+      padding: @dropdown-item-padding-y @dropdown-item-padding-x;
       padding-right: @dropdown-item-padding-x+ @dropdown-item-submenu-icon-angle-spacing+
         @dropdown-item-submenu-icon-angle-width;
+    }
 
-      > .rs-dropdown-menu-toggle .rs-dropdown-menu-toggle-icon {
-        right: @dropdown-caret-icon-padding-horizontal;
-      }
+    .rs-dropdown-menu-toggle-icon {
+      right: @dropdown-caret-icon-padding-horizontal;
     }
   }
-
-  &.rs-dropdown-menu-pull-left {
-    &.rs-dropdown-item {
-      padding-left: @dropdown-item-padding-x+ @dropdown-item-submenu-icon-angle-spacing +
-        @dropdown-item-submenu-icon-angle-width;
-
-      > .rs-dropdown-menu-toggle .rs-dropdown-menu-toggle-icon {
-        left: @dropdown-caret-icon-padding-horizontal;
-      }
-    }
-  }
+  //
+  //&.rs-dropdown-menu-pull-left {
+  //  &.rs-dropdown-item {
+  //    padding-left: @dropdown-item-padding-x+ @dropdown-item-submenu-icon-angle-spacing +
+  //      @dropdown-item-submenu-icon-angle-width;
+  //
+  //    > .rs-dropdown-menu-toggle .rs-dropdown-menu-toggle-icon {
+  //      left: @dropdown-caret-icon-padding-horizontal;
+  //    }
+  //  }
+  //}
 
   // Pull right
-  &.rs-dropdown-menu-pull-right > .rs-dropdown-menu {
+  .rs-dropdown-item-pull-right ~ .rs-dropdown-menu {
     left: 100%;
   }
 
   // Pull Left
-  &.rs-dropdown-menu-pull-left > .rs-dropdown-menu {
+  .rs-dropdown-item-pull-left ~ .rs-dropdown-menu {
     right: 100%;
   }
 
@@ -225,30 +249,17 @@
 // Active state
 .rs-dropdown-menu > .rs-dropdown-menu-item-focus {
   outline: 0;
+  background-color: var(--rs-dropdown-item-bg-active);
 
-  &,
   &:hover,
   &:focus {
-    background-color: var(--rs-dropdown-item-bg-active);
-  }
-}
-
-.rs-dropdown-menu > .rs-dropdown-item-active {
-  outline: 0;
-  font-weight: bold;
-
-  &,
-  &:hover,
-  &:focus {
-    color: var(--rs-dropdown-item-text-active);
-    background-color: var(--rs-dropdown-item-bg-active);
+    .menuitem-active();
   }
 }
 
 // Open state for the dropdown
 .rs-dropdown-open {
   > .rs-dropdown-menu {
-    display: block;
     animation-play-state: running;
   }
 

@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import NavItem from './NavItem';
 import Dropdown from '../Dropdown';
-import { ReactChildren, useClassNames, shallowEqual } from '../utils';
+import { useClassNames } from '../utils';
 import { NavbarContext } from '../Navbar/Navbar';
 import { SidenavContext } from '../Sidenav/Sidenav';
 import { WithAsProps, RsRefForwardingComponent } from '../@types/common';
+import NavContext from './NavContext';
+import useEnsuredRef from '../utils/useEnsuredRef';
+import Menubar from '../Menu/Menubar';
 
 export interface NavProps<T = any>
   extends WithAsProps,
@@ -59,63 +62,76 @@ const Nav: NavComponent = (React.forwardRef((props: NavProps, ref: React.Ref<HTM
     ...rest
   } = props;
 
-  const { sidenav = false, expanded = false, activeKey = activeKeyProp, onSelect = onSelectProp } =
-    React.useContext(SidenavContext) || {};
+  const sidenav = useContext(SidenavContext);
+
+  // Whether inside a <Navbar>
+  const navbar = useContext(NavbarContext);
+
+  const menubarRef = useEnsuredRef(ref);
 
   const { withClassPrefix, merge, rootPrefix, prefix } = useClassNames(classPrefix);
+
+  const classes = merge(
+    className,
+    rootPrefix({
+      'navbar-nav': navbar,
+      'navbar-right': pullRight,
+      'sidenav-nav': sidenav
+    }),
+    withClassPrefix(appearance, {
+      horizontal: navbar || (!vertical && !sidenav),
+      vertical: vertical || sidenav,
+      justified,
+      reversed
+    })
+  );
+
+  if (sidenav?.expanded) {
+    return (
+      <ul ref={ref as any} className={classes} {...rest}>
+        {children}
+      </ul>
+    );
+  }
+
+  const { activeKey: activeKeyFromSidenav, onSelect: onSelectFromSidenav = onSelectProp } =
+    sidenav || {};
+
+  const activeKey = activeKeyProp ?? activeKeyFromSidenav;
+
   const hasWaterline = appearance !== 'default';
 
-  const items = ReactChildren.mapCloneElement(children, item => {
-    const { eventKey, active, tooltip: itemTooltip, ...rest } = item.props;
-    const displayName = item?.type?.displayName;
-    const tooltip = typeof itemTooltip === 'undefined' ? sidenav && !expanded : itemTooltip;
-
-    if (displayName === 'NavItem') {
-      return {
-        ...rest,
-        onSelect,
-        tooltip,
-        active: typeof activeKey === 'undefined' ? active : shallowEqual(activeKey, eventKey)
-      };
-    } else if (displayName === 'Dropdown') {
-      return {
-        ...rest,
-        onSelect,
-        activeKey,
-        showHeader: tooltip,
-        as: 'div'
-      };
-    }
-
-    return null;
-  });
-
+  // If inside a collapsed <Sidenav>, render an ARIA `menubar` (vertical)
+  if (sidenav) {
+    return (
+      <NavContext.Provider
+        value={{
+          activeKey,
+          onSelect: onSelectProp ?? onSelectFromSidenav
+        }}
+      >
+        <Menubar vertical={!!sidenav}>
+          {(menubar, ref) => (
+            <Component ref={ref} {...rest} className={classes} {...menubar}>
+              {children}
+            </Component>
+          )}
+        </Menubar>
+      </NavContext.Provider>
+    );
+  }
   return (
-    <NavbarContext.Consumer>
-      {navbar => {
-        const classes = merge(
-          className,
-          rootPrefix({
-            'navbar-nav': navbar,
-            'navbar-right': pullRight,
-            'sidenav-nav': sidenav
-          }),
-          withClassPrefix(appearance, {
-            horizontal: navbar || (!vertical && !sidenav),
-            vertical: vertical || sidenav,
-            justified: justified,
-            reversed: reversed
-          })
-        );
-
-        return (
-          <Component {...rest} ref={ref} className={classes}>
-            {items}
-            {hasWaterline && <div className={prefix('bar')} />}
-          </Component>
-        );
+    <NavContext.Provider
+      value={{
+        activeKey,
+        onSelect: onSelectProp ?? onSelectFromSidenav
       }}
-    </NavbarContext.Consumer>
+    >
+      <Component {...rest} ref={menubarRef} className={classes}>
+        {children}
+        {hasWaterline && <div className={prefix('bar')} />}
+      </Component>
+    </NavContext.Provider>
   );
 }) as unknown) as NavComponent;
 

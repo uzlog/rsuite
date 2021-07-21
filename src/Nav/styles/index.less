@@ -9,6 +9,7 @@
 // --------------------------------------------------
 .rs-nav {
   position: relative;
+  outline: 0;
 
   // Rest dropdown height
   .rs-dropdown > .rs-dropdown-toggle {
@@ -37,8 +38,15 @@
   .reset-link-text-decoration(none);
 
   &:hover,
-  &:focus {
+  &:focus,
+  &&-focus {
     color: var(--rs-navs-text-hover);
+  }
+
+  &:focus-visible {
+    .focus-ring();
+
+    z-index: 1;
   }
 
   &:active {
@@ -129,10 +137,6 @@
     &:focus {
       background: var(--rs-navs-bg-hover);
     }
-
-    &:active {
-      background: var(--rs-navs-bg-active);
-    }
   }
 }
 
@@ -142,10 +146,6 @@
     &:hover,
     &:focus {
       background: var(--rs-navs-bg-hover);
-    }
-
-    &:active {
-      background: var(--rs-navs-bg-active);
     }
 
     &.rs-nav-item-active {
@@ -219,6 +219,11 @@
 .rs-nav-subtle {
   .rs-nav-item {
     position: relative;
+
+    &:hover,
+    &:focus {
+      color: var(--rs-navs-selected);
+    }
 
     &.rs-nav-item-active::before {
       content: '';

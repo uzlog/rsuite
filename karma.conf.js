@@ -6,63 +6,14 @@
  * Run a test of a file: `src/Picker/test/PickerToggleSpec.js npm run tdd`
  */
 
-const path = require('path');
-const webpack = require('webpack');
-const package = require('./package.json');
-
-const webpackConfig = {
-  output: {
-    pathinfo: true
-  },
-  mode: 'development',
-  resolve: {
-    extensions: ['.ts', '.tsx', '.js'],
-    alias: {
-      '@test': path.resolve(__dirname, './test')
-    }
-  },
-  plugins: [
-    new webpack.DefinePlugin({
-      'process.env': {
-        RUN_ENV: JSON.stringify(process.env.RUN_ENV)
-      }
-    })
-  ],
-  module: {
-    rules: [
-      {
-        test: [/\.tsx?$/, /\.jsx?$/],
-        use: ['babel-loader?babelrc'],
-        exclude: /node_modules/
-      },
-      {
-        test: /\.(less|css)$/,
-        use: [
-          {
-            loader: 'style-loader' // creates style nodes from JS strings
-          },
-          {
-            loader: 'css-loader' // translates CSS into CommonJS
-          },
-          {
-            loader: 'less-loader', // compiles Less to CSS,
-            options: {
-              lessOptions: {
-                javascriptEnabled: true
-              }
-            }
-          }
-        ]
-      }
-    ]
-  }
-};
-
+/**
+ * @param {import('karma').Config} config
+ */
 module.exports = config => {
   const { env } = process;
   const { M, F } = env;
 
-  let testFile = 'test/index.js';
+  let testFile = 'src/**/*Spec.js';
 
   if (M) {
     testFile = `src/${M}/test/*.js`;
@@ -72,16 +23,20 @@ module.exports = config => {
 
   config.set({
     basePath: '',
-    files: [testFile],
-    frameworks: ['mocha', 'sinon-chai'],
+    files: [testFile].map(pattern => ({ pattern, watched: false })),
+    frameworks: ['mocha', 'sinon-chai', 'webpack'],
     colors: true,
     reporters: ['mocha', 'coverage', 'BrowserStack'],
     logLevel: config.LOG_INFO,
     preprocessors: {
-      'test/*.js': ['webpack'],
-      'src/**/*.js': ['webpack']
+      'src/**/*Spec.js': ['webpack']
     },
-    webpack: webpackConfig,
+    client: {
+      mocha: {
+        require: [require.resolve('./test/chai-assertions.js')]
+      }
+    },
+    webpack: require('./webpack.karma.js'),
     webpackMiddleware: {
       noInfo: true
     },

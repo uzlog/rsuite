@@ -5,7 +5,6 @@ import slice from 'lodash/slice';
 import { MultiCascaderProps, ValueType } from './MultiCascader';
 import { ItemDataType } from '../@types/common';
 import { flattenTree } from '../utils/treeUtils';
-import { useUpdateEffect } from '../utils';
 
 export interface ItemType extends ItemDataType {
   parent?: ItemType;
@@ -197,14 +196,16 @@ export function useColumnData(flattenData: ItemType[]) {
     setColumnData([...slice(columnData, 0, index), column]);
   }
 
-  useUpdateEffect(() => {
-    setColumnData([flattenData.filter(item => !item.parent)]);
-  }, [flattenData]);
+  function enforceUpdateColumnData(nextData: ItemDataType[]) {
+    const nextFlattenData = flattenTree(nextData);
+    setColumnData([nextFlattenData.filter(item => !item.parent)]);
+  }
 
   return {
     columnData,
     addColumn,
-    setColumnData
+    setColumnData,
+    enforceUpdateColumnData
   };
 }
 
