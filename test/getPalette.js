@@ -1,5 +1,6 @@
 /* eslint-disable indent */
 import tinycolor from 'tinycolor2';
+import 'object.fromentries/shim';
 
 const PRIMARY_INDEX = 5;
 
