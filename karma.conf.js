@@ -12,7 +12,7 @@ const pkg = require('./package.json');
  */
 module.exports = config => {
   const { env } = process;
-  const { M, F } = env;
+  const { M, F, CI } = env;
 
   let testFile = 'src/**/*Spec.js';
 
@@ -30,7 +30,8 @@ module.exports = config => {
     reporters: ['mocha', 'coverage', 'BrowserStack'],
     logLevel: config.LOG_INFO,
     preprocessors: {
-      'src/**/*Spec.js': ['webpack']
+      'src/**/*Spec.js': ['webpack'],
+      'test/**/*.js': ['webpack']
     },
     client: {
       mocha: {
@@ -43,7 +44,7 @@ module.exports = config => {
     },
     browserStack: {
       project: process.env.BROWSERSTACK_PROJECT_NAME || pkg.name,
-      build: process.env.BROWSERSTACK_BUILD_NAME,
+      build: process.env.BROWSERSTACK_BUILD_NAME || `Local test ${Date.now()}`,
       // use '0' instead of 0 because 0 doesn't work
       // @see https://github.com/karma-runner/karma-browserstack-launcher/issues/179
       retryLimit: '0',
@@ -90,7 +91,7 @@ module.exports = config => {
         browser_version: '14.0'
       }
     },
-    browsers: [process.env.KARMA_BROWSER || 'bs_mac_safari'],
+    browsers: CI ? [process.env.KARMA_BROWSER] : ['Chrome'],
     // @see https://github.com/browserstack/karma-browserstack-example/blob/master/karma.conf.js
     captureTimeout: 3e5,
     // browserDisconnectTolerance: 0,
