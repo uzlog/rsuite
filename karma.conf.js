@@ -5,6 +5,7 @@
  * Run a component test: `M=Button npm run tdd`
  * Run a test of a file: `src/Picker/test/PickerToggleSpec.js npm run tdd`
  */
+const pkg = require('./package.json');
 
 /**
  * @param {import('karma').Config} config
@@ -41,7 +42,7 @@ module.exports = config => {
       noInfo: true
     },
     browserStack: {
-      project: process.env.BROWSERSTACK_PROJECT_NAME || package.name,
+      project: process.env.BROWSERSTACK_PROJECT_NAME || pkg.name,
       build: process.env.BROWSERSTACK_BUILD_NAME,
       // use '0' instead of 0 because 0 doesn't work
       // @see https://github.com/karma-runner/karma-browserstack-launcher/issues/179
@@ -92,10 +93,15 @@ module.exports = config => {
     browsers: [process.env.KARMA_BROWSER || 'bs_mac_safari'],
     // @see https://github.com/browserstack/karma-browserstack-example/blob/master/karma.conf.js
     captureTimeout: 3e5,
-    browserDisconnectTolerance: 0,
-    browserDisconnectTimeout: 3e5,
+    // browserDisconnectTolerance: 0,
+    // browserDisconnectTimeout: 3e5,
     browserSocketTimeout: 1.2e5,
-    browserNoActivityTimeout: 3e5,
+    // browserNoActivityTimeout: 3e5,
+
+    // Ref: https://github.com/mui-org/material-ui/blob/next/test/karma.conf.js
+    browserDisconnectTimeout: 3 * 60 * 1000, // default 2000
+    browserDisconnectTolerance: 1, // default 0
+    browserNoActivityTimeout: 3 * 60 * 1000, // default 30000
     coverageReporter: {
       dir: 'coverage',
       reporters: [
